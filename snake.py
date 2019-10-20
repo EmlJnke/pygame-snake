@@ -87,6 +87,10 @@ def title_screen(screen, screen_width, screen_height):
             if event.type == pygame.QUIT:
                 return "Quit"
 
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    return "Quit"
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse = pygame.mouse.get_pos()
                 # Button's pressed method is called
@@ -353,11 +357,11 @@ def snake(screen, field_width, field_height, tile_size, player_number, items_on,
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                return
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    pygame.event.post(pygame.event.Event(pygame.QUIT))
+                    return
 
                 if event.key == pygame.K_UP:
                     direction_1 = 1
