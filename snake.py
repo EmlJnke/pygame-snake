@@ -395,7 +395,7 @@ def snake(screen, field_width, field_height, tile_size, player_number, items_on,
 
         pygame.draw.rect(screen, (127, 127, 127), (0, tile_size *
                                                    field_height, tile_size * field_width, 2))
-        text_str = 'Highscore: ' + str(highscore_1)
+        text_str = 'Score: ' + str(highscore_1)
         text = font_gr.render(text_str, True, (255, 10, 10))
         screen.blit(text, (10, tile_size * field_height + 2))
         text_str = 'Länge: ' + str(snake_length_1)
@@ -404,7 +404,7 @@ def snake(screen, field_width, field_height, tile_size, player_number, items_on,
                            10 - text.get_width(), tile_size * field_height + 2))
 
         if player_number > 1:
-            text_str = 'Highscore: ' + str(highscore_2)
+            text_str = 'Score: ' + str(highscore_2)
             text = font_gr.render(text_str, True, (10, 10, 255))
             screen.blit(text, (tile_size * field_width - 10 -
                                text.get_width(), tile_size * field_height + 2))
@@ -422,22 +422,41 @@ def snake(screen, field_width, field_height, tile_size, player_number, items_on,
         if died_2 == 1:
             text_str = "Snake blue died, Snake yellow wins!"
 
+        text_str_points_1 = f"Snake blue: {highscore_2} points"
+        text_str_points_2 = f"Snake yellow: {highscore_1} points"
+
     else:
         text_str = "You died!"
+        text_str_points_1 = f"You scored {highscore_1} points!"
 
     running = True
+
+    i = 1
 
     while running:
 
         if i == 1:
             screen.fill((0, 0, 0))
             text = font_hu.render(text_str, True, (255, 255, 255))
-        if i == 2:
+            text_2 = font_hu.render(text_str_points_1, True, (255, 255, 255))
+            if player_number > 1:
+                text_3 = font_hu.render(
+                    text_str_points_2, True, (255, 255, 255))
+        if i == 3:
             screen.fill((255, 255, 255))
             text = font_hu.render(text_str, True, (0, 0, 0))
+            text_2 = font_hu.render(text_str_points_1, True, (0, 0, 0))
+            if player_number > 1:
+                text_3 = font_hu.render(text_str_points_2, True, (0, 0, 0))
 
         screen.blit(text, (int((tile_size * field_width) / 2) - int(text.get_width() / 2),
                            (int((tile_size * field_height) / 2) - int(text.get_height() / 2))))
+
+        screen.blit(text_2, (int((tile_size * field_width) / 2) - int(text_2.get_width() / 2),
+                             (int((tile_size * field_height) / 2) - int(text_2.get_height() / 2) + 50)))
+        if player_number > 1:
+            screen.blit(text_3, (int((tile_size * field_width) / 2) - int(text_3.get_width() / 2),
+                                 (int((tile_size * field_height) / 2) - int(text_3.get_height() / 2) + 100)))
 
         pygame.display.flip()
 
@@ -448,7 +467,7 @@ def snake(screen, field_width, field_height, tile_size, player_number, items_on,
             if event.type == pygame.KEYDOWN:
                 running = False
 
-        if i == 1:
+        if i <= 3:
             i += 1
         else:
             i = 1
@@ -464,7 +483,7 @@ def main():
 
     pygame.init()
     screen = pygame.display.set_mode((screen_width, screen_height))
-    pygame.display.set_icon(pygame.image.load("gfx/snake_20x20_1.png"))
+    pygame.display.set_icon(pygame.image.load("gfx/python_logo_20x20.png"))
     pygame.display.set_caption("Snäik bai Lili mit einem 'l' und Emil")
     pygame.mouse.set_visible(1)
     pygame.key.set_repeat(0, 30)
