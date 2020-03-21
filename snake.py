@@ -2,10 +2,9 @@
 ## Kapitel 6.4  ##
 ##################
 
-import pygame
 import random
 from time import sleep
-
+import pygame
 
 def load_image(filename, colorkey=None):
     image = pygame.image.load(filename)
@@ -23,7 +22,7 @@ def load_image(filename, colorkey=None):
 
 
 class Button(pygame.sprite.Sprite):
-    """Class used to create a button, use setCords to set 
+    """Class used to create a button, use setCords to set
         position of topleft corner. Method pressed() returns
         a boolean and should be called inside the input loop."""
 
@@ -52,11 +51,8 @@ class Button(pygame.sprite.Sprite):
             return False
 
 
-def title_screen(screen, screen_width, screen_height):
+def title_screen(screen):
     buttons = pygame.sprite.Group()
-    font_gr = pygame.font.Font("fonts/font.ttf", 20)
-    font_sm = pygame.font.Font("fonts/font.ttf", 16)
-    font_hu = pygame.font.Font("fonts/font.ttf", 50)
 
     clock = pygame.time.Clock()
     title_image = load_image("gfx/title_screen.png")
@@ -158,6 +154,8 @@ def snake(screen, field_width, field_height, tile_size, player_number, items_on,
             'gfx/apple_'+str(tile_size)+'x'+str(tile_size)+'.png')
         coin_image = load_image(
             'gfx/coin_'+str(tile_size)+'x'+str(tile_size)+'.png')
+        virus_image = load_image(
+            'gfx/virus_'+str(tile_size)+'x'+str(tile_size)+'.png')
 
         for i in range(0, 10):
             pos_x = random.randint(0, field_width-1)
@@ -173,12 +171,22 @@ def snake(screen, field_width, field_height, tile_size, player_number, items_on,
                 pos_x = random.randint(0, field_width-1)
                 pos_y = random.randint(0, field_height-1)
             field[pos_x][pos_y] = -2
+        for i in range(0, 10):
+            pos_x = random.randint(0, field_width-1)
+            pos_y = random.randint(0, field_height-1)
+            while (field[pos_x][pos_y] != 0):
+                pos_x = random.randint(0, field_width-1)
+                pos_y = random.randint(0, field_height-1)
+            field[pos_x][pos_y] = -3
 
+    corona = 0
     timer = 0
     running = True
     while running:
         clock.tick(30)
         timer = timer + 1
+        if corona > 0:
+            corona -= 1
         if timer == speed:
             timer = 0
 
@@ -186,7 +194,7 @@ def snake(screen, field_width, field_height, tile_size, player_number, items_on,
                 # Wenn ich am Bildrand bin ...
                 if pos_y_1 == 0:
                     # Wenn die Grenze offen ist ...
-                    if open_border == True:
+                    if open_border:
                         pos_y_1 = field_height-1
                         # Wenn die Grenze geschlossen ist ...
                     else:
@@ -200,7 +208,7 @@ def snake(screen, field_width, field_height, tile_size, player_number, items_on,
             # Code analog zu Spieler 1 und Richtung 1 mit Anpassung an Richtung 2
             if direction_1 == 2:
                 if pos_x_1 == field_width-1:
-                    if open_border == True:
+                    if open_border:
                         pos_x_1 = 0
                     else:
                         running = False
@@ -210,7 +218,7 @@ def snake(screen, field_width, field_height, tile_size, player_number, items_on,
             # Code analog zu Spieler 1 und Richtung 1 mit Anpassung an Richtung 3
             if direction_1 == 3:
                 if pos_y_1 == field_height-1:
-                    if open_border == True:
+                    if open_border:
                         pos_y_1 = 0
                     else:
                         running = False
@@ -220,7 +228,7 @@ def snake(screen, field_width, field_height, tile_size, player_number, items_on,
             # Code analog zu Spieler 1 und Richtung 1 mit Anpassung an Richtung 4
             if direction_1 == 4:
                 if pos_x_1 == 0:
-                    if open_border == True:
+                    if open_border:
                         pos_x_1 = field_width-1
                     else:
                         running = False
@@ -238,7 +246,7 @@ def snake(screen, field_width, field_height, tile_size, player_number, items_on,
                 # für Spieler 2
                 if direction_2 == 1:
                     if pos_y_2 == 0:
-                        if open_border == True:
+                        if open_border:
                             pos_y_2 = field_height-1
                         else:
                             running = False
@@ -249,7 +257,7 @@ def snake(screen, field_width, field_height, tile_size, player_number, items_on,
                 # für Spieler 2
                 if direction_2 == 2:
                     if pos_x_2 == field_width-1:
-                        if open_border == True:
+                        if open_border:
                             pos_x_2 = 0
                         else:
                             running = False
@@ -260,7 +268,7 @@ def snake(screen, field_width, field_height, tile_size, player_number, items_on,
                 # für Spieler 2
                 if direction_2 == 3:
                     if pos_y_2 == field_height-1:
-                        if open_border == True:
+                        if open_border:
                             pos_y_2 = 0
                         else:
                             running = False
@@ -271,7 +279,7 @@ def snake(screen, field_width, field_height, tile_size, player_number, items_on,
                 # für Spieler 2
                 if direction_2 == 4:
                     if pos_x_2 == 0:
-                        if open_border == True:
+                        if open_border:
                             pos_x_2 = field_width-1
                         else:
                             running = False
@@ -308,6 +316,14 @@ def snake(screen, field_width, field_height, tile_size, player_number, items_on,
                         pos_x = random.randint(0, field_width-1)
                         pos_y = random.randint(0, field_height-1)
                     field[pos_x][pos_y] = -2
+                if field[pos_x_1][pos_y_1] == -3:
+                    corona += 90
+                    pos_x = random.randint(0, field_width-1)
+                    pos_y = random.randint(0, field_height-1)
+                    while (field[pos_x][pos_y] != 0):
+                        pos_x = random.randint(0, field_width-1)
+                        pos_y = random.randint(0, field_height-1)
+                    field[pos_x][pos_y] = -3
 
                 field[pos_x_1][pos_y_1] = snake_length_1 + 1
 
@@ -357,26 +373,27 @@ def snake(screen, field_width, field_height, tile_size, player_number, items_on,
                 if event.key == pygame.K_UP:
                     direction_1 = 1
 
-                if event.key == pygame.K_DOWN:
-                    direction_1 = 3
+                if corona == 0:
+                    if event.key == pygame.K_DOWN:
+                        direction_1 = 3
 
-                if event.key == pygame.K_LEFT:
-                    direction_1 = 4
+                    if event.key == pygame.K_LEFT:
+                        direction_1 = 4
 
-                if event.key == pygame.K_RIGHT:
-                    direction_1 = 2
+                    if event.key == pygame.K_RIGHT:
+                        direction_1 = 2
 
-                if event.key == pygame.K_w:
-                    direction_2 = 1
+                    if event.key == pygame.K_w:
+                        direction_2 = 1
 
-                if event.key == pygame.K_s:
-                    direction_2 = 3
+                    if event.key == pygame.K_s:
+                        direction_2 = 3
 
-                if event.key == pygame.K_a:
-                    direction_2 = 4
+                    if event.key == pygame.K_a:
+                        direction_2 = 4
 
-                if event.key == pygame.K_d:
-                    direction_2 = 2
+                    if event.key == pygame.K_d:
+                        direction_2 = 2
 
         screen.fill((153, 204, 255))
 
@@ -392,6 +409,8 @@ def snake(screen, field_width, field_height, tile_size, player_number, items_on,
                     screen.blit(apple_image, (tile_size*x, tile_size*y))
                 if field[x][y] == -2:
                     screen.blit(coin_image, (tile_size * x, tile_size * y))
+                if field[x][y] == -3:
+                    screen.blit(virus_image, (tile_size * x, tile_size * y))
 
         pygame.draw.rect(screen, (127, 127, 127), (0, tile_size *
                                                    field_height, tile_size * field_width, 2))
@@ -488,7 +507,7 @@ def main():
     pygame.mouse.set_visible(1)
     pygame.key.set_repeat(0, 30)
 
-    args = title_screen(screen, screen_width, screen_height)
+    args = title_screen(screen)
 
     pygame.mouse.set_visible(0)
 
