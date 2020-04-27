@@ -3,8 +3,9 @@
 ##################
 
 import random
-from time import sleep
+from time import sleep, time
 import pygame
+
 
 def load_image(filename, colorkey=None):
     image = pygame.image.load(filename)
@@ -143,8 +144,11 @@ def snake(screen, field_width, field_height, tile_size, player_number, items_on,
         pos_y_2 = random.randint(5, field_height-1-5)
         field[pos_x_2][pos_y_2] = 2000 + snake_length_2
 
-    direction_1 = 2
+    direction_1 = 0
     direction_2 = 4
+
+    temp_direction_1 = 2
+    temp_direction_2 = 4
 
     highscore_1 = 0
     highscore_2 = 0
@@ -179,14 +183,17 @@ def snake(screen, field_width, field_height, tile_size, player_number, items_on,
                 pos_y = random.randint(0, field_height-1)
             field[pos_x][pos_y] = -3
 
-    corona = 0
+    corona_1 = 0
+    corona_2 = 0
     timer = 0
     running = True
     while running:
         clock.tick(30)
         timer = timer + 1
-        if corona > 0:
-            corona -= 1
+        if corona_1 > 0:
+            corona_1 -= 1
+        if corona_2 > 0:
+            corona_2 -= 1
         if timer == speed:
             timer = 0
 
@@ -206,7 +213,7 @@ def snake(screen, field_width, field_height, tile_size, player_number, items_on,
 
                     # Die Schlange bewegt sich nicht mehr hier auf das neue Feld, sondern später.
             # Code analog zu Spieler 1 und Richtung 1 mit Anpassung an Richtung 2
-            if direction_1 == 2:
+            if direction_1 == 0:
                 if pos_x_1 == field_width-1:
                     if open_border:
                         pos_x_1 = 0
@@ -255,7 +262,7 @@ def snake(screen, field_width, field_height, tile_size, player_number, items_on,
 
                 # Code analog zu Spieler 1 und Richtung 1 mit Anpassung an Richtung 2
                 # für Spieler 2
-                if direction_2 == 2:
+                if direction_2 == 0:
                     if pos_x_2 == field_width-1:
                         if open_border:
                             pos_x_2 = 0
@@ -317,7 +324,7 @@ def snake(screen, field_width, field_height, tile_size, player_number, items_on,
                         pos_y = random.randint(0, field_height-1)
                     field[pos_x][pos_y] = -2
                 if field[pos_x_1][pos_y_1] == -3:
-                    corona += 90
+                    corona_1 += 30
                     pos_x = random.randint(0, field_width-1)
                     pos_y = random.randint(0, field_height-1)
                     while (field[pos_x][pos_y] != 0):
@@ -352,6 +359,15 @@ def snake(screen, field_width, field_height, tile_size, player_number, items_on,
                             pos_y = random.randint(0, field_height-1)
                         field[pos_x][pos_y] = - 2
 
+                    if field[pos_x_2][pos_y_2] == -3:
+                        corona_2 += 30
+                        pos_x = random.randint(0, field_width-1)
+                        pos_y = random.randint(0, field_height-1)
+                        while (field[pos_x][pos_y] != 0):
+                            pos_x = random.randint(0, field_width-1)
+                            pos_y = random.randint(0, field_height-1)
+                        field[pos_x][pos_y] = -3
+
                     field[pos_x_2][pos_y_2] = 2000 + snake_length_2 + 1
 
             elif running != True:
@@ -370,30 +386,38 @@ def snake(screen, field_width, field_height, tile_size, player_number, items_on,
                 if event.key == pygame.K_ESCAPE:
                     return
 
-                if event.key == pygame.K_UP:
-                    direction_1 = 1
+                if corona_1 == 0:
+                    if event.key == pygame.K_UP:
+                        temp_direction_1 = 1
 
-                if corona == 0:
                     if event.key == pygame.K_DOWN:
-                        direction_1 = 3
+                        temp_direction_1 = 3
 
                     if event.key == pygame.K_LEFT:
-                        direction_1 = 4
+                        temp_direction_1 = 4
 
                     if event.key == pygame.K_RIGHT:
-                        direction_1 = 2
+                        temp_direction_1 = 0
+
+                    if 4-direction_1 != temp_direction_1:
+                        direction_1 = temp_direction_1
+
+                if corona_2 == 0:
 
                     if event.key == pygame.K_w:
-                        direction_2 = 1
+                        temp_direction_2 = 1
 
                     if event.key == pygame.K_s:
-                        direction_2 = 3
+                        temp_direction_2 = 3
 
                     if event.key == pygame.K_a:
-                        direction_2 = 4
+                        temp_direction_2 = 4
 
                     if event.key == pygame.K_d:
-                        direction_2 = 2
+                        temp_direction_2 = 0
+
+                    if 4-direction_2 != temp_direction_2:
+                        direction_2 = temp_direction_2
 
         screen.fill((153, 204, 255))
 
@@ -461,7 +485,7 @@ def snake(screen, field_width, field_height, tile_size, player_number, items_on,
             if player_number > 1:
                 text_3 = font_hu.render(
                     text_str_points_2, True, (255, 255, 255))
-        if i == 3:
+        if i == 5:
             screen.fill((255, 255, 255))
             text = font_hu.render(text_str, True, (0, 0, 0))
             text_2 = font_hu.render(text_str_points_1, True, (0, 0, 0))
@@ -486,12 +510,12 @@ def snake(screen, field_width, field_height, tile_size, player_number, items_on,
             if event.type == pygame.KEYDOWN:
                 running = False
 
-        if i <= 3:
+        if i <= 7:
             i += 1
         else:
             i = 1
 
-        sleep(0.1)
+        sleep(0.2)
 
     pygame.quit()
 
